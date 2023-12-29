@@ -1,249 +1,25 @@
 liveagent:
-  global:
-    namespace: mastercard
-
-    keyVaultName: "kv-sophie-mastercard"
-
-    advancedConfig:
-      azureTenantId: "69f82b29-1380-4974-ab4f-521b1a44c970"
-
   communication:
-    replicaCount: 1
-
     image:
       repository: acrapplications.azurecr.io/common/eventflowwebapi
       pullPolicy: Always
       tag: "release-SOE-10.e96945f.5812799663"
 
-    resources:
-      requests:
-        memory: 256Mi
-        cpu: 100m
-      limits:
-        memory: 384Mi
-        cpu: 400m
-
-    config:
-      parameters:
-        ASPNETCORE_ENVIRONMENT: "Production"
-        ApplicationConfiguration__UriWebSocketPrincipal: wss://chat-usapi.stefanini.com/chat-api/websocket
-        ApplicationConfiguration__UriWebSocketSecondary: wss://chat-usapi.stefanini.com/chat-api/websocket
-        ApplicationConfiguration__Appkey: 599f9617-1962-42cd-bac9-2f3c4ee34777
-        ApplicationConfiguration__User: stef_gen_sophie
-        TenantName: "mastercard"
-        AppName: "communication"
-        ManagerApiAdapterConfiguration__ApiUrlBase: "http://liveagent-manager-service"
-        ManagerApiAdapterConfiguration__EnableCommunication: "True"
-        MetricsSettings__MetricsEnableAppInsights: "True"
-        MetricsSettings__MetricsAppInsightsInstrumentationKey: "089172c3-ebc5-4c8d-9ec4-9a039730dd8c"
-        MetricsSettings__MetricsEnableAppInsightsK8sEnricher: "False"
-        Serilog__MinimumLevel__Override__Websocket.Client: "Warning"
-      
-      secretsConfig:
-        enabled: true
-        keyVaultName: "kv-sophie-mastercard"
-        podIdentityLabel: "id-sophie-mastercard"
-        secrets:
-        - key: SqlServerAdapterConfiguration__SqlConnectionString
-          objectName: dev-communication-sqlconnectionstring
-        - key: ApplicationConfiguration__Pass
-          objectName: dev-channel-pass    
-
-    aadpodidbinding: "id-sophie-mastercard"
-
-    nodeSelector: 
-      agentpool: linpla    
-
-    service:
-      type: ClusterIP
-      port: 80
-      annotations: 
-        service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-
-    externalTraffic:
-      enabled: false
-      host: ""
-      ssl:
-        enabled: false
-        keyVaultObjectName: ""
-
   manager:
-    replicaCount: 1
-
     image:
       repository: acrapplications.azurecr.io/common/eventflowwebapi
       pullPolicy: Always
       tag: "release-SOE-10.d683844.5812802100"
 
-    resources:
-      requests:
-        memory: 256Mi
-        cpu: 100m
-      limits:
-        memory: 384Mi
-        cpu: 400m
-
-    config:  
-      parameters:
-        ASPNETCORE_ENVIRONMENT: "Production"
-        TenantName: "mastercard"
-        AppName: "manager"
-        CommunicationApiAdapterConfiguration__ApiUrlBase: "http://liveagent-communication-service"      
-        CommunicationApiAdapterConfiguration__EnableCommunication: "True"
-        SophieApiAdapterConfiguration__ApiUrlBase: "http://morgan-dev.sophieagent.com"
-        SophieApiAdapterConfiguration__EnableCommunication: "True"
-        MetricsSettings__MetricsEnableAppInsights: "True"
-        MetricsSettings__MetricsAppInsightsInstrumentationKey: "089172c3-ebc5-4c8d-9ec4-9a039730dd8c"
-        MetricsSettings__MetricsEnableAppInsightsK8sEnricher: "False"
-        LoggingSettings__LoggingType: "stdout"
-        
-      secretsConfig:
-        enabled: true
-        keyVaultName: "kv-sophie-mastercard"
-        podIdentityLabel: "id-sophie-mastercard"
-        secrets:
-        - key: DistributedCacheSettings__CacheSqlConnectionString
-          objectName: auto-liveagent-dev-cache-sqlconnstring
-        - key: SqlServerAdapterConfiguration__SqlConnectionString
-          objectName: auto-liveagent-dev-manager-sqlconnstring
-        - key: AuditSqlAdapterConfiguration__SqlConnectionString
-          objectName: auto-liveagent-dev-audit-sqlconnstring
-
-    aadpodidbinding: "id-sophie-mastercard"
-
-    nodeSelector: 
-      agentpool: linpla
-
-    service:
-      type: ClusterIP
-      port: 80
-      annotations:
-        service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-
-    externalTraffic:
-      enabled: false
-      host: ""
-      ssl:
-        enabled: false
-        keyVaultObjectName: ""
-
   timeout:
-    replicaCount: 1
-
     image:
       repository: acrapplications.azurecr.io/common/eventflowwebapi
       pullPolicy: Always
       tag: "release-v1.0.0-genesys-stefanini.dd1da67"
 
-    resources:
-      requests:
-        memory: 256Mi
-        cpu: 100m
-      limits:
-        memory: 384Mi
-        cpu: 400m
-
-    config:
-      parameters:
-        ASPNETCORE_ENVIRONMENT: "Production"
-        TimeoutUserWorkerConfiguration__TenantName: mastercard
-        TenantName: "mastercard"
-        AppName: "timeoutuser"
-        CommunicationApiAdapterConfiguration__ApiUrlBase: "http://liveagent-communication-service"      
-        CommunicationApiAdapterConfiguration__EnableCommunication: "True"
-        ManagerApiAdapterConfiguration__ApiUrlBase: "http://liveagent-manager-service"
-        ManagerApiAdapterConfiguration__EnableCommunication: "True"
-        MetricsSettings__MetricsEnableAppInsights: "True"
-        MetricsSettings__MetricsAppInsightsInstrumentationKey: "089172c3-ebc5-4c8d-9ec4-9a039730dd8c"
-        MetricsSettings__MetricsEnableAppInsightsK8sEnricher: "False"
-      
-      secretsConfig:
-        enabled: true
-        keyVaultName: "kv-sophie-mastercard"
-        podIdentityLabel: "id-sophie-mastercard"
-        secrets:
-        - key: DistributedCacheSettings__CacheSqlConnectionString
-          objectName: auto-liveagent-dev-audit-sqlconnstring
-        - key: SqlServerAdapterConfiguration__SqlConnectionString
-          objectName: auto-liveagent-dev-manager-sqlconnstring
-
-    aadpodidbinding: "id-sophie-mastercard"
-
-    nodeSelector:
-      agentpool: linpla
-
-    cronJob:
-      schedule: "* * * * *"
-      image: acrapplications.azurecr.io/external/busybox:latest
-
-    service:
-      type: ClusterIP
-      port: 80
-      annotations:
-        service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-
-    externalTraffic:
-      enabled: false
-      host: ""
-      ssl:
-        enabled: false
-        keyVaultObjectName: ""
 
   keepalive:
-    replicaCount: 1
-
     image:
       repository: acrapplications.azurecr.io/common/eventflowwebapi
       pullPolicy: Always
       tag: "release-v1.0.0-genesys-stefanini.e1678f5"
-
-    resources:
-      requests:
-        memory: 256Mi
-        cpu: 100m
-      limits:
-        memory: 384Mi
-        cpu: 400m
-
-    config:
-      parameters:
-        ASPNETCORE_ENVIRONMENT: "Production"
-        KeepAliveChannelWorkerConfiguration__TenantName: mastercard
-        KeepAliveChannelWorkerConfiguration__ForceCloseChannelThroughIdless: "false"
-        TenantName: "mastercard"
-        AppName: "keepalivechannel"
-        MetricsSettings__MetricsEnableAppInsights: "True"
-        MetricsSettings__MetricsAppInsightsInstrumentationKey: "089172c3-ebc5-4c8d-9ec4-9a039730dd8c"
-        MetricsSettings__MetricsEnableAppInsightsK8sEnricher: "False"
-      
-      secretsConfig:
-        enabled: true
-        keyVaultName: "kv-sophie-mastercard"
-        podIdentityLabel: "id-sophie-mastercard"
-        secrets:
-        - key: DistributedCacheSettings__CacheSqlConnectionString
-          objectName: auto-liveagent-dev-cache-sqlconnstring
-        - key: SqlServerAdapterConfiguration__SqlConnectionString
-          objectName: auto-liveagent-dev-communication-sqlconnstring
-
-    aadpodidbinding: "id-sophie-mastercard"
-
-    nodeSelector:
-      agentpool: linpla
-
-    cronJob:
-      schedule: "* * * * *"
-      image: acrapplications.azurecr.io/external/busybox:latest
-
-    service:
-      type: ClusterIP
-      port: 80
-      annotations:
-        service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-
-    externalTraffic:
-      enabled: false
-      host: ""
-      ssl:
-        enabled: false
-        keyVaultObjectName: ""
