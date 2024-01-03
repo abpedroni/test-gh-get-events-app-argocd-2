@@ -3,23 +3,23 @@ liveagent:
     image:
       repository: acrapplications.azurecr.io/common/eventflowwebapi
       pullPolicy: Always
-      tag: "release-SOE-10.e96945f.5812799663"
+      tag: "master.4f199a0.7293914525"
 
   manager:
     image:
       repository: acrapplications.azurecr.io/common/eventflowwebapi
       pullPolicy: Always
-      tag: "release-SOE-10.d683844.5812802100"
+      tag: "master.4f199a0.7293914525"
 
   timeout:
     image:
       repository: acrapplications.azurecr.io/common/eventflowwebapi
       pullPolicy: Always
-      tag: "release-v1.0.0-genesys-stefanini.dd1da67"
+      tag: "master.4f199a0.7293914525"
 
 
   keepalive:
     image:
       repository: acrapplications.azurecr.io/common/eventflowwebapi
       pullPolicy: Always
-      tag: "release-v1.0.0-genesys-stefanini.e1678f5"
+      tag: "master.4f199a0.7293914525"
